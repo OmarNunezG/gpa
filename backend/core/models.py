@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from uuid import uuid4
 
 # Create your models here.
 
@@ -50,7 +51,10 @@ class User(AbstractUser, PermissionsMixin):
 
     objects = UserManager()
 
-    REQUIRED_FIELDS = ["first_name", "last_name", "username", "email"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "email"]
+
+    def __str__(self) -> str:
+        return self.username
 
 
 class Account(models.Model):
@@ -59,18 +63,29 @@ class Account(models.Model):
         max_length=16, unique=True, editable=False
     )
     current_balance = models.DecimalField(
-        decimal_places=4, default=0, validators=[MinValueValidator("0.01")]
+        max_digits=100,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator("0.01")],
     )
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return self.account_number
 
 
 class TransactionType(models.Model):
     ID = models.AutoField(primary_key=True, unique=True, editable=False)
     transaction_type = models.CharField(max_length=10)
 
+    def __str__(self) -> str:
+        return self.transaction_type
+
 
 class Transaction(models.Model):
-    ID = models.AutoField(primary_key=True, unique=True, editable=False)
+    ID = models.UUIDField(
+        primary_key=True, default=uuid4, unique=True, editable=False
+    )
     date = models.DateTimeField(auto_now_add=True)
     transaction_type = models.ForeignKey(
         TransactionType, on_delete=models.PROTECT
@@ -83,3 +98,6 @@ class Transaction(models.Model):
         validators=[MinValueValidator("0.01"), MaxValueValidator("10000")],
     )
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return self.ID
