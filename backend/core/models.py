@@ -13,28 +13,20 @@ from uuid import uuid4
 
 
 class UserManager(BaseUserManager):
-    def create_user(
-        self, first_name, last_name, username, email, password
-    ) -> User:
+    def create(self, first_name, last_name, username, email, password) -> User:
         user = self.model(
-            first_name, last_name, username, email=self.normalize_email(email)
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=self.normalize_email(email),
         )
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
-    def create_superuser(
-        self, first_name, last_name, username, email, password
-    ) -> User:
-        user = self.create_user(
-            first_name, last_name, username, email, password
-        )
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-
-        return user
+    def normalize_email(self, email: str):
+        return email.lower()
 
 
 class User(AbstractUser, PermissionsMixin):
@@ -47,7 +39,7 @@ class User(AbstractUser, PermissionsMixin):
         unique=True,
         validators=[username_validator],
     )
-    email = models.EmailField(unique=True)
+    email = models.EmailField(max_length=255, unique=True)
 
     objects = UserManager()
 
