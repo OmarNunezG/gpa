@@ -3,3 +3,4 @@ djangorestframework>=3.14,<3.15
 djangorestframework-simplejwt>=5.2.2,<5.3
 drf_spectacular>=0.25.1,<0.26
 psycopg2>=2.9.5,<2.10
+numpy>=1.24.1,<1.25
