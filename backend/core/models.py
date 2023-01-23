@@ -79,6 +79,12 @@ class Transaction(models.Model):
         default=0,
         validators=[MinValueValidator("0.01"), MaxValueValidator("10000")],
     )
+    account_balance = models.DecimalField(
+        max_digits=100,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator("0")],
+    )
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
