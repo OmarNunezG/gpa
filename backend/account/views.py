@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from account.serializers import AccountSerializer
 from core.models import Account
-from numpy import random, unique
+import random
 
 # Create your views here.
 
