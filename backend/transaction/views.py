@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
@@ -23,7 +22,7 @@ def transfer(request: Request):
                 "status": "fail",
                 "data": {
                     "title": "Account not found",
-                    "message": "Account was not found. Please, check account number was correct.",
+                    "message": "Please, check account number.",
                 },
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
@@ -39,7 +38,7 @@ def transfer(request: Request):
                     "status": "fail",
                     "data": {
                         "title": "Insuficient founds",
-                        "message": "Account does not have suficient founds to finish the transaction.",
+                        "message": "Cannot process the transaction.",
                     },
                 }
                 return Response(
@@ -52,6 +51,7 @@ def transfer(request: Request):
             transaction_type=data["transaction_type"],
             note=data["note"],
             amount=amount,
+            account_balance=account.current_balance,
             account=account,
         )
 
