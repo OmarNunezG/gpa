@@ -24,7 +24,7 @@ class AccountApiTests(TestCase):
 
         account_payload = {
             "username": "testuser",
-            "current_balance": "2000",
+            "current_balance": 2000,
         }
 
         res = self.client.post(CREATE_ACCOUNT_URL, account_payload)
