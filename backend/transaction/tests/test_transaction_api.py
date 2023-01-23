@@ -4,10 +4,8 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 from core.models import Account
-from transaction.serializers import TransactionSerializer
-from user.serializers import UserSerializer
 
-AUTH_USER_URL = reverse("user:auth")
+AUTH_USER_URL = reverse("user:token_obtain_pair")
 CREATE_ACCOUNT_URL = reverse("account:create")
 REGISTER_USER_URL = reverse("user:register")
 TRANSFER_URL = reverse("transaction:transfer")
@@ -48,14 +46,14 @@ class TransactionTests(TestCase):
 
     def test_debit_transfer_success(self):
         account = Account.objects.get(user=self.user)
-        transfer_payload = {
+        transaction_payload = {
             "transaction_type": "DEBIT",
             "note": "Store",
             "amount": 10,
             "account": account.account_number,
         }
 
-        res = self.client.post(TRANSFER_URL, transfer_payload)
+        res = self.client.post(TRANSFER_URL, transaction_payload)
         account = Account.objects.get(user=self.user)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
