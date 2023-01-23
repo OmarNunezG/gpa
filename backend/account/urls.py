@@ -5,4 +5,5 @@ app_name = "account"
 
 urlpatterns = [
     path("create/", views.create_account, name="create"),
+    path("balance/<str:date>", views.get_balance, name="get_balance"),
 ]
