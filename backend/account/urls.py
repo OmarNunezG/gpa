@@ -5,5 +5,9 @@ app_name = "account"
 
 urlpatterns = [
     path("create/", views.create_account, name="create"),
-    path("balance/<str:date>", views.get_balance, name="get_balance"),
+    path(
+        "balance/<str:account_number>/",
+        views.get_balance,
+        name="get_balance",
+    ),
 ]
