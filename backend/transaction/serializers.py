@@ -8,7 +8,14 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["date", "transaction_type", "note", "amount", "account"]
+        fields = [
+            "date",
+            "transaction_type",
+            "note",
+            "amount",
+            "account_balance",
+            "account",
+        ]
 
     def get_account(self, obj: Transaction):
         account = obj.account
