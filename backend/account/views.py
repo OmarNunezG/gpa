@@ -39,3 +39,8 @@ def create_account(request: Request):
         }
 
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def get_balance(self, date):
+    pass
