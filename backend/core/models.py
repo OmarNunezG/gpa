@@ -66,25 +66,15 @@ class Account(models.Model):
         return self.account_number
 
 
-class TransactionType(models.Model):
-    ID = models.AutoField(primary_key=True, unique=True, editable=False)
-    transaction_type = models.CharField(max_length=10)
-
-    def __str__(self) -> str:
-        return self.transaction_type
-
-
 class Transaction(models.Model):
     ID = models.UUIDField(
         primary_key=True, default=uuid4, unique=True, editable=False
     )
     date = models.DateTimeField(auto_now_add=True)
-    transaction_type = models.ForeignKey(
-        TransactionType, on_delete=models.PROTECT
-    )
+    transaction_type = models.CharField(max_length=10)
     note = models.CharField(max_length=30)
-    amout = models.DecimalField(
-        max_digits=7,
+    amount = models.DecimalField(
+        max_digits=5,
         decimal_places=2,
         default=0,
         validators=[MinValueValidator("0.01"), MaxValueValidator("10000")],
@@ -92,4 +82,4 @@ class Transaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
-        return self.ID
+        return str(self.ID)
