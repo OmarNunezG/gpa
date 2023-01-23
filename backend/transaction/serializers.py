@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Transaction, TransactionType, Account
+from core.models import Transaction
 from account.serializers import AccountSerializer
 
 
@@ -10,8 +10,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ["date", "transaction_type", "note", "amount", "account"]
 
-    def get_account(self, obj):
-        print(obj)
+    def get_account(self, obj: Transaction):
         account = obj.account
         serializer = AccountSerializer(account, many=False)
-        return serializer.data
+        return serializer.data["account_number"]
