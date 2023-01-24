@@ -53,7 +53,7 @@ def get_balance(request: Request, account_number):
         user = request.user
         account = Account.objects.get(account_number=account_number)
 
-        if account.user is not user:
+        if account.user != user:
             response = {
                 "status": "fail",
                 "data": {
