@@ -9,8 +9,10 @@ import {
   TableHead,
 } from '@mui/material';
 import NavBar from '../components/NavBar';
+import { useParams } from 'react-router-dom';
 
 function TransactionsScreen() {
+  const { accountNumber } = useParams();
   const [transactions, setTransactions] = useState('');
 
   useEffect(() => {
@@ -21,13 +23,17 @@ function TransactionsScreen() {
           Authorization: `Bearer ${access}`,
         },
       };
-      const { data } = await axios.get('api/users/transactions', config);
-      console.log(data.data);
+      const { data } = accountNumber
+        ? await axios.get(
+            `/api/accounts/${accountNumber}/transactions/`,
+            config
+          )
+        : await axios.get('api/users/transactions/', config);
       setTransactions(data.data.transactions);
     }
 
     getTransactions();
-  }, []);
+  }, [accountNumber]);
 
   return (
     <Container>
