@@ -10,6 +10,7 @@ from account.serializers import AccountSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from user.serializers import CustomTokenObtainPairSerializer
 from transaction.serializers import TransactionSerializer
+from operator import itemgetter
 
 # Create your views here.
 
@@ -77,15 +78,24 @@ def user_accounts(request: Request):
 def transactions(request: Request):
     try:
         user = request.user
-        accounts = [account for account in Account.objects.filter(user=user)]
+        accounts = Account.objects.filter(user=user)
 
-        transactions = Transaction.objects.filter(account=accounts)
+        transactions = []
+        for account in accounts:
+            transactions += Transaction.objects.filter(account=account)
+
         serializer = TransactionSerializer(transactions, many=True)
+        sorted_transactions = sorted(
+            serializer.data,
+            key=itemgetter("date"),
+            reverse=True,
+        )
 
         response = {
             "status": "success",
             "data": {
-                "transactions": serializer.data,
+                "count": len(sorted_transactions),
+                "transactions": sorted_transactions,
             },
         }
         return Response(response, status=status.HTTP_200_OK)
