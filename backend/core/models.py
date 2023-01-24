@@ -28,6 +28,16 @@ class UserManager(BaseUserManager):
     def normalize_email(self, email: str):
         return email.lower()
 
+    def create_superuser(
+        self, first_name, last_name, username, email, password
+    ):
+        user = self.create(first_name, last_name, username, email, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+
+        return user
+
 
 class User(AbstractUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
