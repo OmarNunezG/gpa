@@ -10,4 +10,9 @@ urlpatterns = [
         views.get_balance,
         name="get_balance",
     ),
+    path(
+        "<str:account_number>/transactions/",
+        views.account_transactions,
+        name="account_transactions",
+    ),
 ]
