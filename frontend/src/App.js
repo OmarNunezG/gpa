@@ -10,14 +10,11 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/accounts" element={<AccountsScreen />} />
-          <Route path="/transactions" element={<TransactionsScreen />}>
-            <Route path="" element={<TransactionsScreen />} />
-            <Route path=":accountNumber" element={<TransactionsScreen />} />
-          </Route>
-          {/* <Route
+          <Route path="/transactions" element={<TransactionsScreen />} />
+          <Route
             path="/transactions/:accountNumber"
             element={<TransactionsScreen />}
-          /> */}
+          />
         </Routes>
       </main>
     </Router>
