@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from core.models import Account
 
@@ -11,7 +10,20 @@ REGISTER_USER_URL = reverse("user:register")
 TRANSFER_URL = reverse("transaction:transfer")
 
 
-class TransactionTests(TestCase):
+class TransactionTests(APITestCase):
+    def create_user(self, details, is_admin=False):
+        user = get_user_model().objects.create(
+            first_name=details["first_name"],
+            last_name=details["last_name"],
+            username=details["username"],
+            email=details["email"],
+            password=details["password"],
+        )
+        user.is_staff = is_admin
+        user.is_superuser = is_admin
+        user.save()
+        return user
+
     def get_user(self, username):
         user = get_user_model().objects.get(username=username)
         return user
@@ -35,7 +47,8 @@ class TransactionTests(TestCase):
             "current_balance": 2000,
         }
 
-        self.client.post(REGISTER_USER_URL, register_user_payload)
+        user = self.create_user(register_user_payload, True)
+        self.client.force_authenticate(user)
         self.client.post(AUTH_USER_URL, user_auth_payload)
         self.client.post(CREATE_ACCOUNT_URL, account_payload)
         self.user = self.get_user(register_user_payload["username"])
