@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
 import AccountsScreen from './screens/AccountsScreen';
+import TransactionsScreen from './screens/TransactionsScreen';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/accounts" element={<AccountsScreen />} />
+          <Route path="/transactions" element={<TransactionsScreen />} />
         </Routes>
       </main>
     </Router>
