@@ -7,6 +7,7 @@ from user import views
 app_name = "user"
 
 urlpatterns = [
+    path("transactions/", views.transactions, name="transactions"),
     path("accounts/", views.user_accounts, name="user-accounts"),
     path("register/", views.register, name="register"),
     path(

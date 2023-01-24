@@ -5,10 +5,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from user.serializers import UserSerializer
-from core.models import Account
+from core.models import Account, Transaction
 from account.serializers import AccountSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from user.serializers import CustomTokenObtainPairSerializer
+from transaction.serializers import TransactionSerializer
+from operator import itemgetter
 
 # Create your views here.
 
@@ -69,3 +71,39 @@ def user_accounts(request: Request):
         }
 
         return Response(response, status=status.HTTP_409_CONFLICT)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def transactions(request: Request):
+    try:
+        user = request.user
+        accounts = Account.objects.filter(user=user)
+
+        transactions = []
+        for account in accounts:
+            transactions += Transaction.objects.filter(account=account)
+
+        serializer = TransactionSerializer(transactions, many=True)
+        sorted_transactions = sorted(
+            serializer.data,
+            key=itemgetter("date"),
+            reverse=True,
+        )
+
+        response = {
+            "status": "success",
+            "data": {
+                "count": len(sorted_transactions),
+                "transactions": sorted_transactions,
+            },
+        }
+        return Response(response, status=status.HTTP_200_OK)
+    except Exception as ex:
+        response = {
+            "status": "error",
+            "data": {
+                "message": f"Error, {ex}",
+            },
+        }
+        return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

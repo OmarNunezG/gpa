@@ -7,15 +7,13 @@ from rest_framework import status
 from account.serializers import AccountSerializer
 from transaction.serializers import TransactionSerializer
 from core.models import Account, Transaction
-from datetime import datetime
 import random
-import json
 
 # Create your views here.
 
 
 @api_view(["POST"])
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 def create_account(request: Request):
     try:
         data = request.data
@@ -46,24 +44,24 @@ def create_account(request: Request):
 
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_balance(request: Request, account_number):
     try:
         date = request.query_params.get("date")
         year, month, day = date[4:8], date[2:4], date[:2]
 
-        # user = request.user
+        user = request.user
         account = Account.objects.get(account_number=account_number)
 
-        # if account.user is not user:
-        #     response = {
-        #         "status": "fail",
-        #         "data": {
-        #             "title": "Unauthorized",
-        #             "message": "",
-        #         },
-        #     }
-        #     return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+        if account.user is not user:
+            response = {
+                "status": "fail",
+                "data": {
+                    "title": "Unauthorized",
+                    "message": "",
+                },
+            }
+            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
         transaction = Transaction.objects.filter(
             account=account,
@@ -90,3 +88,40 @@ def get_balance(request: Request, account_number):
         }
 
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def account_transactions(request: Request, account_number):
+    try:
+        user = request.user
+        account = Account.objects.get(account_number=account_number)
+
+        if account.user != user:
+            response = {
+                "status": "fail",
+                "data": {
+                    "title": "Invalid account",
+                    "message": "This account does not exists.",
+                },
+            }
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
+
+        transactions = Transaction.objects.filter(account=account)
+        serializer = TransactionSerializer(transactions, many=True)
+
+        response = {
+            "status": "success",
+            "data": {
+                "transactions": serializer.data,
+            },
+        }
+        return Response(response, status=status.HTTP_200_OK)
+    except Exception as ex:
+        response = {
+            "status": "error",
+            "data": {
+                "message": f"Error, {ex}",
+            },
+        }
+        return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

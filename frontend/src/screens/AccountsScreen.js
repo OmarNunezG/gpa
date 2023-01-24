@@ -14,6 +14,7 @@ import NavBar from '../components/NavBar';
 
 function AccountsScreen() {
   const [accounts, setAccounts] = useState('');
+
   useEffect(() => {
     async function getAccounts() {
       const { access } = JSON.parse(localStorage.getItem('userInfo'));
